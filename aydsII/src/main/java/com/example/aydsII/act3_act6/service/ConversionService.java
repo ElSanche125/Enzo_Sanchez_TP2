@@ -1,6 +1,8 @@
-package com.example.aydsII.act3.service;
+package com.example.aydsII.act3_act6.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -8,19 +10,20 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
-import com.example.aydsII.act3.model.Conversion;
+import com.example.aydsII.act3_act6.model.*;
 
 @Service
 public class ConversionService {
 
     private final RestClient restClient;
+    private final HistorialConversionesRepository repository;
 
-    public ConversionService(RestClient divisasRestClient) {
+    public ConversionService(RestClient divisasRestClient, HistorialConversionesRepository repository) {
         this.restClient = divisasRestClient;
+        this.repository = repository;
     }
 
-    public Conversion convertir(double monto, String origen, String destino) {
-
+    public HistorialConversiones convertir(double monto, String origen, String destino) {
         String monedaOrigen = origen.toUpperCase();
         String monedaDestino = destino.toUpperCase();
 
@@ -39,23 +42,20 @@ public class ConversionService {
                 );
             }
 
-            double tasaCambio =
-                    ((Number) respuesta.get("rate")).doubleValue();
+            double tasaCambio = ((Number) respuesta.get("rate")).doubleValue();
 
             double montoConvertido = monto * tasaCambio;
 
-            String fechaTexto = (String) respuesta.get("date");
+            HistorialConversiones historial = new HistorialConversiones();
 
-            LocalDate fecha = LocalDate.parse(fechaTexto);
+            historial.setMonedaOrigen(monedaOrigen);
+            historial.setMonedaDestino(monedaDestino);
+            historial.setMonto(monto);
+            historial.setMontoConvertido(redondear(montoConvertido));
+            historial.setTasa(redondear(tasaCambio));
+            historial.setFechaConsulta(LocalDateTime.now());
 
-            return new Conversion(
-                    monto,
-                    monedaOrigen,
-                    monedaDestino,
-                    redondear(tasaCambio),
-                    redondear(montoConvertido),
-                    fecha
-            );
+            return repository.save(historial);
 
         } catch (RestClientResponseException ex) {
 
@@ -83,5 +83,13 @@ public class ConversionService {
     private double redondear(double valor) {
 
         return Math.round(valor * 100.0) / 100.0;
+    }
+
+    public List<Map<String, Object>> historial(String origen, String destino) {
+
+        String monedaOrigen = origen.toUpperCase();
+        String monedaDestino = destino.toUpperCase();
+
+        return repository.historial(monedaOrigen,monedaDestino);
     }
 }

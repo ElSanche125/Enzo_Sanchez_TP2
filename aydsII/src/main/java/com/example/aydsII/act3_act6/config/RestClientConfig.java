@@ -1,4 +1,4 @@
-package com.example.aydsII.act3.config;
+package com.example.aydsII.act3_act6.config;
 
 import java.time.Duration;
 
@@ -12,10 +12,12 @@ public class RestClientConfig {
 
     private static final String BASE_URL = "https://api.frankfurter.dev";
 
-
     @Bean
     public RestClient divisasRestClient() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+
+        SimpleClientHttpRequestFactory factory =
+                new SimpleClientHttpRequestFactory();
+
         factory.setConnectTimeout(Duration.ofSeconds(3));
         factory.setReadTimeout(Duration.ofSeconds(3));
 
