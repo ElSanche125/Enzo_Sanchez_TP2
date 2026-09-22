@@ -43,26 +43,10 @@ public class VentasController {
                 new ApiResponse<>(400,"La lista de ventas no puede estar vacía",null)
             );
         }
-
-        double totalFacturado = service.totalFacturado(ventas);
-        int cantidadVentas = ventas.size();
-        double ticketPromedio = totalFacturado / cantidadVentas;
-
-        List<VentasDTO> ventaMayor = service.ventaMayor(ventas);
-        List<VentasDTO> ventaMenor = service.ventaMenor(ventas);
-
-        String productoMasVendido = service.productoMasVendido(ventas);
-        Map<String, Object> resultado = new HashMap<>();
-
-        resultado.put("totalFacturado", totalFacturado);
-        resultado.put("cantidadVentas", cantidadVentas);
-        resultado.put("ticketPromedio", ticketPromedio);
-        resultado.put("productoMasVendido", productoMasVendido);
-        resultado.put("ventaMayor", ventaMayor);
-        resultado.put("ventaMenor", ventaMenor);
-
+        
         return ResponseEntity.ok(
-            new ApiResponse<>(200,"Operación completada exitosamente",resultado)
+            new ApiResponse<>(200,"Operación completada exitosamente",
+            service.obtenerEstadisticas(ventas))
         );
     }
 
@@ -74,7 +58,6 @@ public class VentasController {
     public ResponseEntity<ApiResponse<Map<String, Object>>> aplicarDescuento(
             @RequestBody @Valid List<VentasDTO> ventas,
             @RequestParam int descuento) {
-
 
         return ResponseEntity.ok(
             new ApiResponse<>(200,"Descuento aplicado exitosamente",

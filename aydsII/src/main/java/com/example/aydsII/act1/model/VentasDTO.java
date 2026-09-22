@@ -3,6 +3,7 @@ package com.example.aydsII.act1.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class VentasDTO {
     @Positive (message = "La cantidad debe ser mayor a 0")
     @Schema(description = "Precio del producto", example = "4500")
     private double precioUnitario;
+
 }
 
 /* Datos para usar

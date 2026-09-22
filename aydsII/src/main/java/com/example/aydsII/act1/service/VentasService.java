@@ -12,6 +12,30 @@ import com.example.aydsII.act1.model.VentasDTO;
 @Service
 public class VentasService {
 
+    public Map<String, Object> obtenerEstadisticas(List<VentasDTO> ventas){
+
+        double totalFacturado = totalFacturado(ventas);
+        int cantidadVentas = ventas.size();
+        double ticketPromedio = totalFacturado / cantidadVentas;
+
+        List<VentasDTO> ventaMayor = ventaMayor(ventas);
+        List<VentasDTO> ventaMenor = ventaMenor(ventas);
+
+        String productoMasVendido = productoMasVendido(ventas);
+        
+        Map<String, Object> resultado = new HashMap<>();
+
+        resultado.put("totalFacturado", totalFacturado);
+        resultado.put("cantidadVentas", cantidadVentas);
+        resultado.put("ticketPromedio", ticketPromedio);
+        resultado.put("productoMasVendido", productoMasVendido);
+        resultado.put("ventaMayor", ventaMayor);
+        resultado.put("ventaMenor", ventaMenor);
+
+        return resultado;
+    }
+
+
     public double totalFacturado(List<VentasDTO> ventas) {
 
         double total = 0;
